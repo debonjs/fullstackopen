@@ -1,122 +1,90 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
+const Button = ({ text, onSmash, id }) => {
+  return (
+    <button
+      id={id}
+      onClick={onSmash}
+      className="border border-stone-400 bg-blue-300   rounded-sm p-2 font-semibold shadow-sm shadow-blue-300 hover:bg-blue-900 hover:text-amber-50 active:bg-cyan-500"
+    >
+      {text}
+    </button>
+  );
+};
+
+const StatisticLine = ({ value, text }) => (
+  <tr>
+    <td className="px-4">{text}</td>
+    <td className="px-1">{value}</td>
+  </tr>
+);
+
+const Statistics = ({ good, neutral, bad }) => {
+  const total = good + neutral + bad;
+
+  if (total === 0) {
+    return <p>No feedback given</p>;
+  }
+
+  const average = (good * 1 + neutral * 0 + bad * -1) / total;
+  const positive = (good / total) * 100;
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="flex flex-col items-center">
+      <h3 className="text-2xl font-bold mt-3">Statistics</h3>
 
-      <div className="ticks"></div>
+      <table>
+        <tbody>
+          <StatisticLine value={good} text={"Good"} />
+          <StatisticLine value={neutral} text={"Neutral"} />
+          <StatisticLine value={bad} text={"Bad"} />
+          <StatisticLine value={total} text={"All"} />
+          <StatisticLine value={average.toFixed(1)} text={"Average"} />
+          <StatisticLine value={positive.toFixed(1) + "%"} text={"Positive"} />
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+function App() {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+  const handleIncrementComments = (e) => {
+    switch (e.target.id) {
+      case "good":
+        setGood((prevGood) => prevGood + 1);
+        break;
+      case "neutral":
+        setNeutral((prevNeutral) => prevNeutral + 1);
+        break;
+      case "bad":
+        setBad((prevBad) => prevBad + 1);
+        break;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <section className="flex flex-col w-full min-h-screen items-center">
+      <h2 className="text-4xl font-bold mt-1">Give feedback</h2>
+
+      <div className="flex mt-4 gap-1">
+        <Button id={"good"} text={"Good"} onSmash={handleIncrementComments} />
+        <Button
+          id="neutral"
+          text={"Neutral"}
+          onSmash={handleIncrementComments}
+        />
+        <Button id="bad" text={"Bad"} onSmash={handleIncrementComments} />
+      </div>
+
+      <Statistics good={good} neutral={neutral} bad={bad} />
+    </section>
+  );
 }
 
-export default App
+export default App;
