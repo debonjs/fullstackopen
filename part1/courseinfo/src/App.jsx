@@ -1,14 +1,25 @@
-const Header = () => {
-  return <div></div>;
+const Header = ({ course }) => {
+  console.log(course);
+  return <h1>{course}</h1>;
 };
 
-const Content = () => {
-  return <div></div>;
+const Content = ({ parts }) => {
+  return (
+    <div>
+      <Part part={parts[0]} />
+      <Part part={parts[1]} />
+      <Part part={parts[2]} />
+    </div>
+  );
 };
 
-const Total = () => {
-  return <div></div>;
-};
+const Part = ({ part }) => (
+  <p>
+    {part.name} {part.exercises}
+  </p>
+);
+
+const Total = ({ total }) => <p>Number of exercises {total}</p>;
 
 const App = () => {
   const course = {
@@ -33,7 +44,13 @@ const App = () => {
     <div>
       <Header course={course.name} />
       <Content parts={course.parts} />
-      <Total parts={course.parts} />
+      <Total
+        total={
+          course.parts[0].exercises +
+          course.parts[1].exercises +
+          course.parts[2].exercises
+        }
+      />
     </div>
   );
 };
