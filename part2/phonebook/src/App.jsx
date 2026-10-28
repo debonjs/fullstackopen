@@ -3,6 +3,7 @@ import SearchFilter from "./components/SearchFilter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import phoneService from "./services/phonebook";
+import Notification from "./components/Notification";
 
 function App() {
   const [persons, setPersons] = useState([]);
@@ -10,11 +11,15 @@ function App() {
   const [newName, setNewName] = useState("");
   const [newPhoneNumber, setNewPhoneNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [notification, setNotification] = useState(null);
+  const [notificationType, setNotificationType] = useState({
+    message: null,
+    type: "",
+  });
 
   useEffect(() => {
-    phoneService.getAll().then((initialPersons) => {
-      setPersons(initialPersons);
-    });
+    phoneService.getAll().then(setPersons);
+    // .then(setPersons) <=> .then((initialPersons) => {setPersons(initialPersons);})
   }, []);
 
   useEffect(() => {
@@ -67,38 +72,92 @@ function App() {
                   : returnedPerson,
               ),
             );
+
+            setNewName("");
+            setNewPhoneNumber("");
+          })
+          .catch((error) => {
+            setNotification(
+              `Information of ${newName} has already been removed from server`,
+            );
+            setNotificationType("notification-error");
+            setTimeout(() => {
+              setNotification(null);
+            }, 4000);
+            setPersons(
+              persons.filter(
+                (person) => person.id !== personIsAlreadyExisted.id,
+              ),
+            );
           });
-        setNewName("");
-        setNewPhoneNumber("");
         return;
       }
+      setNotification(`${newName} is already added to phonebook`);
+      setNotificationType("notification-warning");
+      setTimeout(() => {
+        setNotification(null);
+      }, 4000);
+
+      return;
     }
     if (phoneNumberIsAlreadyExisted) {
-      return alert(`${newPhoneNumber} is already added to phonebook`);
+      setNotification(`${newPhoneNumber} is already added to phonebook`);
+      setNotificationType("notification-warning");
+      setTimeout(() => {
+        setNotification(null);
+      }, 4000);
+      return;
     }
 
     const personObject = {
       name: newName,
       number: newPhoneNumber,
     };
-    phoneService.create(personObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName("");
-      setNewPhoneNumber("");
-    });
+    phoneService
+      .create(personObject)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNotification(`Added ${returnedPerson.name}`);
+        setNotificationType("notification-success");
+        setTimeout(() => {
+          setNotification(null);
+        }, 4000);
+        setNewName("");
+        setNewPhoneNumber("");
+      })
+      .catch((error) => {
+        setNotification(`Error inesperado: ${error.message}`);
+        setNotificationType("notification-error");
+        setTimeout(() => {
+          setNotification(null);
+        }, 4000);
+      });
   };
 
   const handleDelete = (id, name) => {
     if (window.confirm(`Delete ${name}`)) {
-      phoneService.remove(id).then(() => {
-        setPersons(persons.filter((person) => person.id !== id));
-      });
+      phoneService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id));
+        })
+        .catch((error) => {
+          setNotification(
+            `Information of ${name} has already been removed from server`,
+          );
+          setNotificationType("notification-error");
+          setTimeout(() => {
+            setNotification(null);
+          }, 4000);
+          setPersons(persons.filter((person) => person.id !== id));
+        });
     }
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification type={notificationType} message={notification} />
       <SearchFilter searchQuery={searchQuery} handleFilter={handleFilter} />
       <br />
 

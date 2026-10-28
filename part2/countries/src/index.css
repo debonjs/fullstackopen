@@ -1,0 +1,60 @@
+:root {
+    /* Brand Colors (Sunset Palette) */
+    --color-primary: #ff7582; /* Coral brillante: Ideal para botones principales, enlaces o acentos visuales */
+    --color-secondary: #c56c86; /* Rosa malva: Excelente para botones secundarios o estados "hover" */
+    --color-tertiary: #725a7a; /* Morado apagado: Útil para bordes, divisiones o íconos */
+
+    /* UI / Layout */
+    --color-surface: #355c7d; /* Azul acero: Perfecto para tarjetas (cards), barras de navegación o menús laterales */
+    --color-background: #2a3442; /* El azul muy oscuro del fondo de la imagen, ideal para el lienzo principal de tu app */
+
+    /* Text */
+    --color-text-main: #ffffff; /* Texto blanco principal para contrastar con los fondos oscuros */
+    --color-text-muted: #d1d5db; /* /* Un gris claro para texto secundario o subtítulos */
+    --fuente-base: "Arial", sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+#root {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: start;
+    background-color: var(--color-background);
+}
+
+.countries_container {
+    min-width: 90%;
+    margin-top: 24px;
+    padding: 12px;
+    background-color: var(--color-surface);
+    border-radius: 8px;
+    color: var(--color-text-main);
+}
+.search_countries {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    label {
+        font-size: 24px;
+    }
+
+    input {
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+    }
+}
+
+.countries_result {
+    margin-top: 12px;
+}
