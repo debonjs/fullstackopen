@@ -34,6 +34,7 @@ function App() {
         ),
       )
       .catch((error) => {
+        console.log("ERROR=>", error);
         setErrorMessage(
           `the note '${note.content}' was already deleted from server`,
         );
@@ -61,6 +62,12 @@ function App() {
       });
   };
 
+  const notesToShow = showAll
+    ? notes
+    : notes.filter(
+        (note) => note.important === true,
+      );
+
   return (
     <div>
       <h1>Notes</h1>
@@ -74,7 +81,7 @@ function App() {
         </button>
       </div>
       <ul>
-        {notes.map((note) => (
+        {notesToShow.map((note) => (
           <Note
             key={note.id}
             note={note}
